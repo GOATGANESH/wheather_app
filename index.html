@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheather Now</title>
+    <link rel="stylesheet" href="newstyle.css" />
+    
+  </head>
+  <body>
+    <div id="card">
+      <div id="search">
+        <input type="text" placeholder="Enter city to search" id="searchCity" />
+        <div>
+          <img
+            src="/total-images/search.png"
+            alt="search-icon"
+            id="search-icon"
+            style="width: 15px;"
+          />
+        </div>
+      </div>
+      <div id="city-temprature">
+        <img
+          src="/total-images/clouds.png"
+          alt="clear-wheather"
+          id="wheather"
+        />
+        <div class="flex-col">
+          <span id="temp">22°C</span>
+          <span class="city">New-York</span>
+        </div>
+      </div>
+      <hr id="horizontal" />
+      <div id="temp-details" style="margin-top: 10%">
+        <div id="humidity" class="flex-col">
+          <img
+            src="/total-images/humidity.png"
+            alt="humidity"
+            id="humidity-icon"
+          />
+          <p><span>Humidity : </span><span id="humidity-value">50%</span></p>
+        </div>
+        <div id="wind" class="flex-col">
+          <img src="/total-images/wind.png" alt="wind" id="wind-icon" />
+          <p><span>Wind-speed : </span><span id="windSpeed">15 km/hr</span></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let apiKey = "eb47f39722edabfa1897c50778c43f20";
+      let apiUrl =
+        "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+      let wheatherImage = document.getElementById("wheather");
+      let tempu = document.getElementById("temp");
+      let myCity = document.querySelector('.city');
+      let humidity = document.getElementById("humidity-value");
+      let windSpeed = document.getElementById("windSpeed");
+      let searchCity = document.getElementById("searchCity");
+
+      function changeImage(temp){
+        if (temp<5) {
+            wheatherImage.src="/total-images/snow.png";
+           }
+        else if(temp<20){
+          wheatherImage.src="/total-images/drizzle.png";
+        }
+        else if(temp<25){
+          wheatherImage.src="/total-images/rain.png";
+        }
+        else{
+          wheatherImage.src="/total-images/clear.png";
+        }
+      }
+
+      async function changeWheather(city) {
+        let apiResponse = await fetch(apiUrl + city + `&appid=${apiKey}`);
+        let data = await apiResponse.json();
+        
+        if(data.name=="" || data.name==null){
+            tempu.innerHTML = "--";
+            humidity.innerHTML = "--";
+            windSpeed.innerHTML = "--";
+            myCity.textContent = "City Not found";
+        }else{
+            changeImage(Number(Math.round(data.main.temp)));
+            tempu.innerHTML = Math.round(data.main.temp) +" °C";
+            myCity.textContent = data.name;
+            humidity.innerHTML = data.main.humidity + " %";
+            windSpeed.innerHTML = data.wind.speed + " km/hr";
+        }
+      }
+
+      document.querySelector("#search div").addEventListener("click", () => {
+        let updateCity = searchCity.value;
+        changeWheather(updateCity);
+      });
+      
+
+
+    </script>
+  </body>
+</html>
